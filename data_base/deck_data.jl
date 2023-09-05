@@ -1,0 +1,20 @@
+# Contient des decks lists avec des cartes de la card list.
+
+Mono_red_dragons_list = DeckList("The mad deck",
+                                 ["modern", "legacy", "vintage"],
+                                 [(3, ShivanDev),
+                                  (4, SlumberingD),
+                                  (2, DragonEgg),
+                                  (2, AtsushiBS),
+                                  (4, ManaformH),
+                                  (4, ScourgeV),
+                                  (2, DBroodmother),
+                                  (2, HavenSpiritD),
+                                  (4, Nykthos),
+                                  (1, SokenzaCD),
+                                  (16, Mountain),
+                                  (4, OrbD),
+                                  (4, DTempest),
+                                  (1, KFable),
+                                  (3, StrikeIR),
+                                  (4, SarkhanF)])

@@ -1,0 +1,2 @@
+tap_addR = Ability(:activated, 0, "none", true, [:batt], Symbol[], [(tap_unt!, [:pp, :pc])], [(add_mana!, [:pp, "R"])])
+tap_addC = Ability(:activated, 0, "none", true, [:batt], Symbol[], [(tap_unt!, [:pp, :pc])], [(add_mana!, [:pp, "C"])])
