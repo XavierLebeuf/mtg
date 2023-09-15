@@ -1,2 +1,5 @@
-tap_addR = Ability(:activated, 0, "none", true, [:batt], Symbol[], [(tap_unt!, [:pp, :pc])], [(add_mana!, [:pp, "R"])])
-tap_addC = Ability(:activated, 0, "none", true, [:batt], Symbol[], [(tap_unt!, [:pp, :pc])], [(add_mana!, [:pp, "C"])])
+tap_addR = ActivatedAbility(true, [:batt], [tap_untapped!], [:gm :pc], [add_mana!], [:pp :R])
+tap_addCL = ActivatedAbility(true, [:batt], [tap_untapped!], [:gm :pc], [add_mana!], [:pp :CL])
+create_treasure = SpellAbility([create_token!], [:gm :pp :tr])
+#flashback
+#sac_treasure

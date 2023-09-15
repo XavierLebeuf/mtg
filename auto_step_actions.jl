@@ -13,68 +13,60 @@ end
 
 """ Untap step. """
 function go_to_untap(g::Game)
-    println("Untap step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Untap step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
     g.turn += 1
     for card in active_p(g).phasedout
-        move_card!(card.id, active_p(g).phasedout, active_p(g).batt)
+        move_card!(card.id, active_p(g).phasedout, g.battlefield)
     end
-    for card in active_p(g).batt
-        card.tapped = false
+    for card in g.battlefield
+        (card.controller == active_p(g).name) && (card.tapped = false)
     end
     next_step!(g)
 end
 
 """ Upkeep step. """
 function go_to_upkeep(g::Game)
-    g.step = "Begin/upkeep"
-    println("Upkeep step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Upkeep step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
 end
 
 """ Draw step. """
 function go_to_draw(g::Game)
-    g.step = "Begin/draw"
-    println("Draw step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Draw step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
     !(g.starter == active_p(g).name && g.turn == 1 && length(g.players) <= 2) && draw!(active_p(g))
 end
 
 """ Precombat main step. """
 function go_to_precombat_main(g::Game)
-    g.step = "Precombat_main"
-    println("Precombat main step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Precombat main step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
+    show_hand(active_p(g))
 end
 
 """ Begining of combat step. """
 function go_to_combat_beg(g::Game)
-    g.step = "Combat/begin"
-    println("Begining of combat step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Begining of combat step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
 end
 
 """ Declare attackers step. """
 function go_to_combat_att(g::Game)
-    g.step = "Combat/declare_attackers"
-    println("Declare attackers step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Declare attackers step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
 end
 
 """ Declare blockers step. """
 function go_to_combat_blo(g::Game)
-    g.step = "Combat/declare_blockers"
-    println("Declare blockers step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Declare bloackers step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
 end
 
 """ Combat damage step. """
 function go_to_combat_dam(g::Game)
-    g.step = "Combat/demage"
-    println("Combat damage step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Combat damage step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
 end
 
 """ End of combat step. """
 function go_to_combat_end(g::Game)
-    g.step = "Combat/end"
-    println("End of combat step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "End of combat step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
 end
 
 """ Postcombat main step. """
 function go_to_postcombat_main(g::Game)
-    g.step = "Postcombat_main"
-    println("Postcombat main step ($(active_p(g).name))")
+    println("\e[1m\e[38;2;102;102;255;249m", "Post combat main step ($(active_p(g).name))", "\e[1m\e[38;2;190;190;190;249m")
 end

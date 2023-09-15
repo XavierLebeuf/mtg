@@ -8,11 +8,14 @@ abstract type AbstractAbility end
     Pour chaque cost ou effect, indiquer dans un tuple la fonction to call, 
         ainsi qu'un vecteur des arguments de la fonction.
     Dans le vecteur des arguments, indiquer en symbol quelque chose qui est variable.
+        :gm         = game
         :pp         = player parent
         :cp         = carte parent
         :t1         = le premier target.
         :t2         = le second target.
-        :tX         = plus de deux targets. """
+        :tX         = plus de deux targets.
+        token codes = :tr,:dX,:d1,:d2,:d5.
+    Constructeur par défaut: sans parentplayer ni parentcardid. """
 mutable struct Ability <: AbstractAbility
     type::Symbol
     parentcardid::Int
@@ -20,63 +23,72 @@ mutable struct Ability <: AbstractAbility
     manaability::Bool
     zone::Vector{Symbol}
     trigger::Vector{Symbol}
-    cost::Vector{Tuple{Function, Vector{Any}}}
-    effect::Vector{Tuple{Function, Vector{Any}}}
+    costfunc::Vector{Function}
+    costargs::Matrix{Any}
+    effectfunc::Vector{Function}
+    effectargs::Matrix{Any}
 
-    #Ability(type::Symbol,
-    #    manaability::Bool,
-    #    zone::Vector{Symbol},
-    #    trigger::Vector{Symbol},
-    #    cost::Vector{Tuple{Function, Vector{Any}}},
-    #    effect::Vector{Tuple{Function, Vector{Any}}},
-    #    parentplayer = "",
-    #    parentcardid = 0) =
-    #    new(type,
-    #        parentcardid,
-    #        parentplayer,
-    #        manaability,
-    #        zone,
-    #        trigger,
-    #        cost,
-    #        effect)
+    function Ability(type::Symbol,
+                     manaability::Bool,
+                     zone::Vector{Symbol},
+                     trigger::Vector{Symbol},
+                     costfunc::Vector{<:Function},
+                     costargs::Matrix{Symbol},
+                     effectfunc::Vector{<:Function},
+                     effectargs::Matrix{Symbol},
+                     parentplayer = "none",
+                     parentcardid = 0)
+        (length(costfunc) != size(costargs)[1]) && throw(ErrorException("System error: Cost functions vector and arguments vector are not of the same length."))
+        (length(effectfunc) != size(effectargs)[1]) && throw(ErrorException("System error: Effect functions vector and arguments vector are not of the same length."))
+        new(type,
+            parentcardid,
+            parentplayer,
+            manaability,
+            zone,
+            trigger,
+            costfunc,
+            convert(Matrix{Any}, costargs),
+            effectfunc,
+            convert(Matrix{Any}, effectargs))
+    end
 end
 
-""" Constructeur pour une activated ability sans parents. """
+""" Constructeur pour une activated ability. """
 ActivatedAbility(manaability::Bool,
                  zone::Vector{Symbol},
-                 cost::Vector{Tuple{Function, Vector{Any}}},
-                 effect::Vector{Tuple{Function, Vector{Any}}},
+                 costfunc::Vector{<:Function},
+                 costargs::Matrix{Symbol},
+                 effectfunc::Vector{<:Function},
+                 effectargs::Matrix{Symbol},
                  type = :activated,
-                 parentplayer = "",
-                 parentcardid = 0,
                  trigger = Symbol[]) =
                  Ability(type,
-                         parentcardid,
-                         "parentplayer",
                          manaability,
                          zone,
                          trigger,
-                         cost,
-                         effect)
+                         costfunc,
+                         costargs,
+                         effectfunc,
+                         effectargs)
 
-""" Constructeur pour une spell ability sans parents. """
-SpellAbility(cost::Vector{Tuple{Function, Vector{Any}}},
-             effect::Vector{Tuple{Function, Vector{Any}}},
+""" Constructeur pour une spell ability. """
+SpellAbility(effectfunc::Vector{<:Function},
+             effectargs::Matrix{Symbol},
              type = :spell,
-             parentplayer = "",
-             parentcardid = 0,
              manaability = false,
              zone = [:stack],
-             trigger = Symbol[]) =
+             trigger = Symbol[],
+             costfunc = Function[],
+             costargs = Matrix{Symbol}(undef, 0, 0)) =
              Ability(type,
-                     parentcardid,
-                     parentplayer,
                      manaability,
                      zone,
                      trigger,
-                     cost,
-                     effect)
+                     costfunc,
+                     costargs,
+                     effectfunc,
+                     effectargs)
 
-""" Constructeur pour une triggered ability sans parents. """
+""" Constructeur pour une triggered ability. """
 
-""" Constructeur pour une static ability sans parents. """
+""" Constructeur pour une static ability. """

@@ -1,5 +1,3 @@
-# Contient des decks lists avec des cartes de la card list.
-
 Mono_red_dragons_list = DeckList("The mad deck",
                                  ["modern", "legacy", "vintage"],
                                  [(3, ShivanDev),
@@ -13,8 +11,8 @@ Mono_red_dragons_list = DeckList("The mad deck",
                                   (4, Nykthos),
                                   (1, SokenzaCD),
                                   (16, Mountain),
-                                  (4, OrbD),
+                                  (4, OrbDragonK),
                                   (4, DTempest),
-                                  (1, KFable),
-                                  (3, StrikeIR),
-                                  (4, SarkhanF)])
+                                  (1, FUKFable),
+                                  (4, SarkhanF),
+                                  (3, StrikeIR)])

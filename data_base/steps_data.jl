@@ -1,8 +1,6 @@
-# Ordre des steps, et la fonction pour passer à chaque step.
-
-step_list = [("Initialisation/start", x -> x),
-             ("Initialisation/choose_starter", x -> x),
-             ("Initialisation/hand_decisions", x -> x),
+step_list = [("Initialisation/start", x -> nothing),
+             ("Initialisation/choose_starter", x -> nothing),
+             ("Initialisation/hand_decisions", x -> nothing),
              ("Begin/untap", go_to_untap),
              ("Begin/upkeep", go_to_upkeep),
              ("Begin/draw", go_to_draw),

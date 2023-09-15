@@ -1,11 +1,3 @@
-""" 
-    Contient les fonctions de premier niveau.
-    Toutes les fonctions appelées directement par l'utilisateur sont soit ici
-        ou dans le fichier objects/player.jl.
-    Débutent toutes par « global g » et par une vérification que l'action est légale,
-        et finissent toutes par return.
-"""
-
 """ Initialise un joueur. """
 function initialize_player(name::String, deck_list::DeckList, format::String)
     try
@@ -34,7 +26,7 @@ function get_turn_order!()
     global g; check_step(:white, ["Initialisation/start"], g.step)
     
     shuffle!(g.players)
-    (length(g.players) > 2) && show_turn_order(g)
+    (length(g.players) > 2) && show_turn_order()
     println("$(g.players[1].name), choisi qui commence.")
 
     next_step!(g)
@@ -111,7 +103,7 @@ function pass_priority!(p::Player)
     if all_passed_priority(g)
         reset_priority!(g)
         if length(g.stack) > 0
-            #resolve_stack!(g)
+            resolve_stack_top!(g)
         else
             next_step!(g)
         end
@@ -122,37 +114,73 @@ end
 """ Jouer une land. """
 function play!(p::Player, card_id::Int)
     global g; check_step(:white, ["main"], g.step)
-    ("land" ∉ p.hand[id_to_index(card_id, p.hand)].type) && throw(ErrorException("Seulement les lands peuvent être played. $(p.hand[id_to_index(card_id, p.hand)].name) doit être casté."))
+    (:land ∉ id_to_object(card_id, p.hand).type) && throw(ErrorException("Seulement les lands peuvent être played. $(id_to_object(card_id, p.hand).name) doit être casté."))
     !(p.name == g.priority && active_p(g).name == p.name) && throw(ErrorException("Un joueur ne peut que jouer une land lorsqu'il a priorité durant son tour."))
+    (length(g.stack) != 0) && throw(ErrorException("Un joueur ne peut que jouer une land lorsque le stack est vide."))
     p.playedland && throw(ErrorException("Une seul land peut être jouée par tour"))
 
-    move_card!(card_id, p.hand, p.batt)
+    move_card!(card_id, p.hand, g.battlefield)
     p.playedland = true
     return
 end
 
 """ Activate an avtivated ability d'un permanent sur le battlefield. """
-function activate!(p::Player, card_id::Int, ability_index::Int, targets...)
+function activate!(p::Player, card_id::Int, ability_index::Int, targets::Vector{Any})
     global g;
-    card = p.batt[id_to_index(card_id, p.batt)]
+    card = id_to_object(card_id, g.battlefield)
     ability = card.ability[ability_index]
+    (p.name != card.controller) && throw(ErrorException("Un joueur ne peut qu'activer une abilité d'un permanent qu'il contrôle."))
     (p.name != g.priority) && throw(ErrorException("Un joueur ne peut qu'activer une abilité lorsqu'il a la priorité."))
     (:batt ∉ ability.zone) && throw(ErrorException("Cette abilité ne s'active pas from the battlefield."))
 
-    ability = substitute_args(ability, targets)
-    for (func, args) in ability.cost
-        func(args...)
+    ability = substitute_args(g, ability, targets)
+    for (i, func) in enumerate(ability.costfunc)
+        func(ability.costargs[i,:]...)
     end
     if ability.manaability
-        for (func, args) in ability.effect
-            func(args...)
+        for (i, func) in enumerate(ability.effectfunc)
+            func(ability.effectargs[i,:]...)
         end
     else
-        #push_stack!(g, ability)
+        #push_stack!(ability)
     end
     return
 end
 
-""" Cast a spell. """
-function cast!(p::Player)
+""" Activate la première abilité si elle n'a pas de targets d'un permanent sur le battlefield. """
+activate!(p::Player, card_id::Int) = activate!(p, card_id, 1, Any[])
+
+""" Activate la première abilité d'un permanent sur le battlefield. """
+activate!(p::Player, card_id::Int, targets::Vector{Any}) = activate!(p, card_id, 1, targets)
+
+""" Activate une abilité si elle n'a pas de targets d'un permanent sur le battlefield. """
+activate!(p::Player, card_id::Int, ability_index::Int) = activate!(p, card_id, ability_index, Any[])
+
+""" Cast a spell de la main avec targets. """
+function cast!(p::Player, card_id::Int, mana_ids::Vector{Int}, targets::Vector{Any})
+    global g;
+    card = id_to_object(card_id, p.hand)
+    (card.type != :instant) && check_step(:white, ["main"], g.step)
+    (length(g.stack) != 0 && card.type != :instant) && throw(ErrorException("Un joueur ne peut que caster une carte de type $(card.type) lorsque le stack est vide."))
+    (p.name != g.priority) && throw(ErrorException("Un joueur ne peut que caster un spell lorsqu'il a la priorité."))
+
+    pay_mana!(p, card, mana_ids)
+    unique_card = deepcopy(card)
+    push!(g.cache, popat!(p.hand, id_to_index(card_id, p.hand)))
+    for (i,ability) in enumerate(unique_card.ability)
+        if ability.type == :spell
+            unique_card.ability[i] = substitute_args(g, ability, targets)
+        end
+    end
+    push!(g.stack, unique_card)
+    return
 end
+
+""" Cast un spell sans targets de la main avec toute la mana de la mana pool. """
+cast!(p::Player, card_id::Int) = cast!(p, card_id, collect(1:length(p.manapool)), Any[])
+
+""" Cast un spell sans targets de la main. """
+cast!(p::Player, card_id::Int, mana_ids::Vector{Int}) = cast!(p, card_id, mana_ids, Any[])
+
+""" Cast un spell avec tarets de la main avec toute la mana de la mana pool. """
+cast!(p::Player, card_id::Int, targets::Vector{Any}) = cast!(p, card_id, collect(1:length(p.manapool)), targets)
