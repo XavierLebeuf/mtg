@@ -11,12 +11,14 @@ abstract type AbstractAbility end
         :gm         = game
         :pp         = player parent
         :cp         = carte parent
-        :t1         = le premier target.
-        :t2         = le second target.
-        :tX         = plus de deux targets.
+        :va         = vector vide de any
+        :ui         = user inputs
+        :u1         = le premier user input.
+        :u2         = le second user input.
         token codes = :tr,:dX,:d1,:d2,:d5.
-    Constructeur par défaut: sans parentplayer ni parentcardid. """
+    Constructeur par défaut: sans parentplayer ni parentcardid ni id. """
 mutable struct Ability <: AbstractAbility
+    name::String
     type::Symbol
     parentcardid::Int
     parentplayer::String
@@ -24,45 +26,52 @@ mutable struct Ability <: AbstractAbility
     zone::Vector{Symbol}
     trigger::Vector{Symbol}
     costfunc::Vector{Function}
-    costargs::Matrix{Any}
+    costargs::Vector{Vector{Any}}
     effectfunc::Vector{Function}
-    effectargs::Matrix{Any}
+    effectargs::Vector{Vector{Any}}
+    id::Int
 
-    function Ability(type::Symbol,
+    function Ability(name::String,
+                     type::Symbol,
                      manaability::Bool,
                      zone::Vector{Symbol},
                      trigger::Vector{Symbol},
                      costfunc::Vector{<:Function},
-                     costargs::Matrix{Symbol},
+                     costargs::Union{Vector{Vector{Symbol}}, Vector{Vector{Any}}},
                      effectfunc::Vector{<:Function},
-                     effectargs::Matrix{Symbol},
+                     effectargs::Union{Vector{Vector{Symbol}}, Vector{Vector{Any}}},
                      parentplayer = "none",
-                     parentcardid = 0)
-        (length(costfunc) != size(costargs)[1]) && throw(ErrorException("System error: Cost functions vector and arguments vector are not of the same length."))
-        (length(effectfunc) != size(effectargs)[1]) && throw(ErrorException("System error: Effect functions vector and arguments vector are not of the same length."))
-        new(type,
+                     parentcardid = 0,
+                     id = 0)
+        (length(costfunc) != length(costargs)) && throw(ErrorException("System error: Cost functions vector and arguments vector are not of the same length."))
+        (length(effectfunc) != length(effectargs)) && throw(ErrorException("System error: Effect functions vector and arguments vector are not of the same length."))
+        new(name,
+            type,
             parentcardid,
             parentplayer,
             manaability,
             zone,
             trigger,
             costfunc,
-            convert(Matrix{Any}, costargs),
+            convert(Vector{Vector{Any}}, costargs),
             effectfunc,
-            convert(Matrix{Any}, effectargs))
+            convert(Vector{Vector{Any}}, effectargs),
+            id)
     end
 end
 
 """ Constructeur pour une activated ability. """
-ActivatedAbility(manaability::Bool,
+ActivatedAbility(name::String,
+                 manaability::Bool,
                  zone::Vector{Symbol},
                  costfunc::Vector{<:Function},
-                 costargs::Matrix{Symbol},
+                 costargs::Union{Vector{Vector{Symbol}}, Vector{Vector{Any}}},
                  effectfunc::Vector{<:Function},
-                 effectargs::Matrix{Symbol},
+                 effectargs::Union{Vector{Vector{Symbol}}, Vector{Vector{Any}}},
                  type = :activated,
                  trigger = Symbol[]) =
-                 Ability(type,
+                 Ability(name,
+                         type,
                          manaability,
                          zone,
                          trigger,
@@ -72,15 +81,17 @@ ActivatedAbility(manaability::Bool,
                          effectargs)
 
 """ Constructeur pour une spell ability. """
-SpellAbility(effectfunc::Vector{<:Function},
-             effectargs::Matrix{Symbol},
+SpellAbility(name::String,
+             effectfunc::Vector{<:Function},
+             effectargs::Union{Vector{Vector{Symbol}}, Vector{Vector{Any}}},
              type = :spell,
              manaability = false,
              zone = [:stack],
              trigger = Symbol[],
              costfunc = Function[],
-             costargs = Matrix{Symbol}(undef, 0, 0)) =
-             Ability(type,
+             costargs = Vector{Vector{Symbol}}(undef, 0)) =
+             Ability(name,
+                     type,
                      manaability,
                      zone,
                      trigger,

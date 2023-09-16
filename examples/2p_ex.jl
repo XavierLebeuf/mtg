@@ -14,15 +14,35 @@ mulligan!(T)
 mulligan!(T)
 keep_hand!(T, 110, 119)
 
-### TURN ONE ###
-
-pass_priority!(X)
-pass_priority!(T)
-pass_priority!(X)
-pass_priority!(T)
+### TURN 1 X ###
 
 play!(X, 31)
 activate!(X, 31)
 cast!(X, 59)
-pass_priority!(X)
-pass_priority!(T)
+
+auto_pass_priority!(X, 2)
+auto_pass_priority!(T, 2)
+
+### TURN 1 T ###
+
+auto_pass_priority!(T, 1)
+auto_pass_priority!(X, 2)
+
+play!(T, 104)
+activate!(T, 104)
+cast!(T, 120)
+
+auto_pass_priority!(T, 2)
+auto_pass_priority!(X, 2)
+
+### TURN 2 X ###
+
+auto_pass_priority!(X, 1)
+auto_pass_priority!(T, 2)
+
+play!(X, 36)
+activate!(X, 31)
+activate!(X, 36)
+activate!(X, 121, user_inputs = [:R])
+
+### TURN 2 T ###

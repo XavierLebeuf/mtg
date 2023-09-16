@@ -18,6 +18,7 @@ SlumberingD = CreatureCard("Slumbering Dragon", [:R], [:R], Symbol[], [:dragon],
 ShivanDev = CreatureCard("Shivan Devastator", [:X, :R], [:R], Symbol[], [:dragon, :hydra], Ability[], 0, 0)
 DBroodmother = CreatureCard("Dragon Broodmother", [:GE, :GE, :R, :R, :G], [:R, :G], Symbol[], [:dragon], Ability[], 4, 4)
 DragonEgg = CreatureCard("Dragon Egg", [:GE, :GE, :R], [:R], Symbol[], [:dragon, :egg], Ability[], 0, 2)
+ChainerNAdept = CreatureCard("Chainer, Nightmare Adept", [:GE, :GE, :R, :B], [:R, :B], [:legendary], [:human, :minion], Ability[], 3, 2)
 
 # PLANESWALKER
 SarkhanF = PlaneswalkerCard("Sarkhan, Fireblood", [:GE, :R, :R], [:R], [:legendary], [:sarkhan], Ability[], 3)
@@ -32,4 +33,4 @@ Dragon2 = Card("Dragon", Symbol[], [:R], Symbol[], [:creature], [:dragon], Abili
 Dragon5 = Card("Dragon", Symbol[], [:R], Symbol[], [:creature], [:dragon], Ability[], 5, 5, nothing, true)
 Dragon1 = Card("Dragon", Symbol[], [:R], Symbol[], [:creature], [:dragon], Ability[], 1, 1, nothing, true)
 DragonX = Card("Dragon", Symbol[], [:R], Symbol[], [:creature], [:dragon], Ability[], 0, 0, nothing, true)
-Treasure = Card("Treasure", Symbol[], [:CL], Symbol[], [:artifact], Symbol[], Ability[], nothing, nothing, nothing, true)
+Treasure = Card("Treasure", Symbol[], [:CL], Symbol[], [:artifact], Symbol[], [tap_sac_addA], nothing, nothing, nothing, true)

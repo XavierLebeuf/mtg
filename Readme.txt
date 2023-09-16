@@ -1,5 +1,3 @@
-TO DO: finir strike it rich, make non mana activated ability go through stack.
-
 FILE DESCRIPTIONS
 
 Folder objects
@@ -7,8 +5,6 @@ Folder objects
         1. Les structures abstraites et sous-structures.
         2. Un constructeur internes.
         3. Les constructeurs externes, avec un nom de fonction différent de l'objet.
-        4. Des fonctions raccroucis, fermées à l'utilisateur.
-        5. Des extensions de la fonction show, ouvertes à l'utilisateur. Donc inclure « global g ».
 
 Folder data_base
     Chaque fichier est pour une différente liste de données, souvent des objets.
@@ -17,12 +13,19 @@ Folder examples
     Chaque fichier est une série de function calls qui simulent une partie.
     Ces fichiers peuvent être lancés directement après avoir lancé main.jl.
 
-player_actions
-    Contient les fonctions de premier niveau. Fonctions appelées directement par l'utilisateur pour jouer.
-    Débutent toutes par « global g » et par une vérification que l'action est légale et finissent toutes par return.
-
-auto_actions
-    Contient les fonctions de second niveau. Fonctions fermées à l'utilisateur.
+Folder source
+    Contient le code source:
+    player_actions
+        Contient les fonctions de premier niveau. Fonctions appelées directement par l'utilisateur pour jouer.
+        Débutent toutes par « global g » et par une vérification que l'action est légale et finissent toutes par return.
+    short_auto_actions
+        Contient des fonctions de second niveau de 7 lignes au moins, ainsi que les raccourcis. Fonctions fermées à l'utilisateur.
+    long_auto_actions
+        Contient des fonctions de second niveau plus longues. Fonctions fermées à l'utilisateur.
+    auto_step_actions
+        Contient les fonctions de second niveau relatives aux tours de jeux. Fonctions fermées à l'utilisateur
+    show
+        Contient des extensions de la fonction show, ouvertes à l'utilisateur. Doit inclure « global g » et return.
 
 main
     Lance le jeu.

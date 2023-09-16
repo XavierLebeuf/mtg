@@ -21,6 +21,7 @@ mutable struct Card <: AbstractCard
     id::Int
     controller::String
     tapped::Bool
+    damage::Int
 
     Card(name::String,
          cost::Vector{Symbol},
@@ -36,7 +37,8 @@ mutable struct Card <: AbstractCard
          owner = "none",
          id = 0,
          controller = "none",
-         tapped = false) =
+         tapped = false,
+         damage = 0) =
          new(name,
              owner,
              cost,
@@ -51,7 +53,8 @@ mutable struct Card <: AbstractCard
              token,
              id,
              controller,
-             tapped)
+             tapped,
+             damage)
 end
 
 """ Constructor for a non token card with no power/toughness, and no loyalty. """
@@ -149,40 +152,3 @@ PlaneswalkerCard(name::String,
                       toughness,
                       loyalty,
                       token)
-
-""" Renvoie l'index d'une carte dans un vecteur de cartes à partir de son id. """
-id_to_index(card_id::Int, vector::Vector{Card}) = findfirst(x -> x.id == card_id, vector)
-
-""" Renvoie l'objet carte dans un vecteur de cartes à partir de son id. """
-id_to_object(card_id::Int, vector::Vector{Card}) = vector[id_to_index(card_id, vector)]
-
-""" Show une carte. """
-function show(card::Card)
-    for color in card.color
-        print(color, " ")
-    end
-    print("  ", card.name, "   ")
-    show(card.cost)
-    card.token && print("token - ")
-    for t in card.supertype
-        print(t, " ")
-    end
-    for t in card.type
-        print(t, " ")
-    end
-    (length(card.subtype) != 0 ) && print("- ")
-    for t in card.subtype
-        print(t, " ")
-    end
-    print("\nid: ", card.id, "\t\t")
-    (card.power !== nothing) && println(card.power, "/", card.toughness)
-    return
-end
-
-""" Show un ensemble de cartes. """
-function show(set::Vector{Card})
-    for card in set
-        print("($(card.id))", card.name)
-        (card.id != set[end].id) && print(", ")
-    end
-end

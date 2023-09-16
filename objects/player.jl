@@ -8,6 +8,7 @@ mutable struct Player <: AbstractPlayer
     deckname::String
     mulligan::Int
     prioritypass::Bool
+    autopasslevel::Int
     playedland::Bool
     life::Int
     library::Vector{Card}
@@ -19,6 +20,7 @@ mutable struct Player <: AbstractPlayer
     abilities::Vector{Ability}
     manapool::Vector{Mana}
     poison::Int
+    drawfail::Bool
 
     Player(name::String,
            deckname::String,
@@ -26,6 +28,7 @@ mutable struct Player <: AbstractPlayer
            library::Vector{Card},
            mulligan = 0,
            prioritypass = false,
+           autopasslevel = 1,
            playedland = false,
            hand = Card[],
            exile = Card[],
@@ -34,11 +37,13 @@ mutable struct Player <: AbstractPlayer
            sideboard = Card[],
            abilities = Ability[],
            manapool = Mana[],
-           poison = 0) =
+           poison = 0,
+           drawfail = false) =
            new(name,
                deckname,
                mulligan,
                prioritypass,
+               autopasslevel,
                playedland,
                life,
                library,
@@ -49,34 +54,6 @@ mutable struct Player <: AbstractPlayer
                sideboard,
                abilities,
                manapool,
-               poison)
-end
-
-""" Affiche des statistiques in game d'un joueur. """
-function show(p::Player)
-    println("$(p.name) joue $(p.deckname).")
-    println("Life total = $(p.life), Poison counters = $(p.poison)")
-    print("Mana pool = ")
-    (length(p.manapool) > 0) ? show(p.manapool) : println("nothing")
-    println("\n\tNumber of cards in")
-    println("\tLibrary: $(length(p.library))")
-    println("\tHand: $(length(p.hand))")
-    println("\tGraveyard: $(length(p.grave))")
-    println("\tPhased-out zone: $(length(p.phasedout))")
-    println("\tExile: $(length(p.exile))")
-    return
-end
-
-""" Affiche les cartes en main d'un joueur. """
-function show_hand(p::Player)
-    println("$(p.name)'s hand:")
-    show(p.hand)
-    println()
-    return
-end
-
-""" Affiche la mana pool d'un joueur. """
-function show_pool(p::Player)
-    (length(p.manapool) > 0) ? show(p.manapool) : println("nothing")
-    return
+               poison,
+               drawfail)
 end
